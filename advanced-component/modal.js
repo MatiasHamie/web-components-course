@@ -22,9 +22,13 @@ class Modal extends HTMLElement {
           pointer-events: all;
         }
 
+        :host([opened]) #modal{
+          top: 15vh;
+        }
+
         #modal{
           position: fixed;
-          top: 15vh;
+          top: 10vh;
           left: 25%;
           width: 50%;
           z-index: 100;
@@ -36,14 +40,17 @@ class Modal extends HTMLElement {
           justify-content: space-between;
           opacity: 0;
           pointer-events: none;
+          transition: all 0.3s ease-out;
         }
 
         header{
           padding: 1rem;
+          border-bottom: 1px solid #ccc;
         }
   
         ::slotted(h1){
-          font-size: 1.25rem
+          font-size: 1.25rem;
+          margin: 0;
         }
 
         #main{
@@ -70,8 +77,8 @@ class Modal extends HTMLElement {
           <slot></slot>
         </section>
         <section id="actions">
-          <button>Cancel</button>
-          <button>Ok</button>
+          <button id="cancel-btn">Cancel</button>
+          <button id="confirm-btn">Ok</button>
         </section>
       </div>
     `;
@@ -82,6 +89,16 @@ class Modal extends HTMLElement {
       // que fueron pasados por el slot
       console.dir(slots[1].assignedNodes());
     });
+    const backdrop = this.shadowRoot.querySelector("#backdrop");
+    backdrop.addEventListener("click", this._cancel.bind(this));
+
+    const cancelButton = this.shadowRoot.querySelector("#cancel-btn");
+    const confirmButton = this.shadowRoot.querySelector("#confirm-btn");
+
+    // el .bind(this) es para que el this sea la clase y no el boton en si q fue
+    // el q disparo el evento
+    cancelButton.addEventListener("click", this._cancel.bind(this));
+    confirmButton.addEventListener("click", this._confirm.bind(this));
   }
   // con esto en el style edito el host cuando tenga el attr opened truthy
   // :host([opened]) #backdrop,
@@ -104,6 +121,30 @@ class Modal extends HTMLElement {
   open() {
     this.setAttribute("opened", "");
     this.isOpened = true;
+  }
+
+  hide() {
+    if (this.hasAttribute("opened")) {
+      this.removeAttribute("opened");
+    }
+    this.isOpen = false;
+  }
+
+  _cancel(event) {
+    this.hide();
+    // 1ra forma de emitir eventos
+    // bubbles: tira el evento para arriba (DENTRO DEL SHADOW DOM)
+    // sin limitarse por el componente que lo emitio
+    // componsed: el evento puede salir del scope shadowDOM
+    const cancelEvent = new Event("cancel", { bubbles: true, composed: true });
+    event.target.dispatchEvent(cancelEvent);
+  }
+
+  _confirm() {
+    this.hide();
+    // 2da forma de emitir eventos
+    const confirmEvent = new Event("confirm");
+    this.dispatchEvent(confirmEvent);
   }
 }
 
