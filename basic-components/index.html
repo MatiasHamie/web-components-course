@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Components</title>
+    <style>
+      /* Las variables de css pueden ser accedidas por los WC */
+      :root {
+        --color-primary: #a4fcda;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: sans-serif;
+      }
+      /* 
+        Esto es para poner estilos a los div y notar q los divs
+        del WC no se estilan por el shadowDOM
+
+      div {
+        border: 2px solid orange;
+      }
+
+        Esto es para demostrar q lo q este como slot en el 
+        wc, es parte del light DOM y se estila como un componente comun
+        y corriente, si queremos estilar slots, ir al tooltip.js 
+
+      .highlight {
+        background-color: rgb(251, 251, 180);
+      }
+
+        Tambien se puede estilar por fuera el wc desde aca 
+          desde el WC (por ej: tooltip.js), se estila con
+          :host{}
+          
+      uc-tooltip {
+        border: 1px solid blue;
+        padding: 0.15rem;
+      }
+      */
+    </style>
+    <script src="./tooltip.js" defer></script>
+    <script src="./confirm-link.js" defer></script>
+  </head>
+  <body>
+    <p>
+      <uc-tooltip class="important" text="this is a text passed as attr">
+        <span class="highlight">Web components</span>
+      </uc-tooltip>
+      are awesome!
+    </p>
+
+    <uc-tooltip></uc-tooltip>
+
+    <div>this div will not get the wc style</div>
+
+    <!-- Cuando queremos usar un elemento especifico "built-in-element"
+    como en el caso del anchor tag, que extendemos un HTMLAnchorElement en el *.js
+    usamos el 'a' como siempre, pero en lugar de hacer <nombre-webcomponent></nombre-webcomponent>
+    usamos el attr "is" con el nombre del webcomponent
+    -->
+    <a is="uc-confirm-link" href="https://google.com">Google</a>
+  </body>
+</html>
